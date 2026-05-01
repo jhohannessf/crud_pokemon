@@ -108,7 +108,7 @@ routes/endpoints.py
 
 ## Exemplos de operações disponíveis:
 
-# -> LEIA A DOC : [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) <-
+### -> Consulte a DOC : [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 
 1. Consultar Pokémon API (Método GET | URL: http://127.0.0.1:8000/pokemon/{identifier})
 2. Capturar Pokémon API (Método POST | URL: http://127.0.0.1:8000/capture/pokemon/{identifier})
