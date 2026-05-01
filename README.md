@@ -1,51 +1,69 @@
-🐍 PokeAPI CRUD em Python
+# 🐍 PokeAPI CRUD em Python
 
-Aplicação backend desenvolvida em Python que realiza operações de CRUD utilizando dados da PokeAPI, com persistência em banco de dados e organização em camadas (config, models, services, routes e schemas).
+Aplicação backend desenvolvida em Python com apoio parcial de IA, que realiza operações de CRUD utilizando dados da PokeAPI, com persistência em banco de dados e organização em camadas.
 
-📌 Descrição
+---
 
-Este projeto consome dados da PokeAPI e os armazena em um banco de dados, permitindo manipulação completa através de operações CRUD. A aplicação foi estruturada seguindo boas práticas de separação de responsabilidades, simulando um ambiente real de desenvolvimento backend.
+## 📌 Descrição
 
-🚀 Funcionalidades
+Este projeto consome dados da PokeAPI e os armazena em um banco de dados, permitindo manipulação completa através de operações CRUD. A aplicação segue uma arquitetura organizada por responsabilidades.
 
-🔍 Consumo de dados da PokeAPI
-📝 Criação de registros no banco
-📖 Consulta de dados armazenados
-✏️ Atualização de informações
-❌ Remoção de registros
-🔄 Tratamento e organização dos dados
+---
 
-🛠️ Tecnologias utilizadas
+## 🚀 Funcionalidades
 
-Python 3.x
-Requests
-SQLite
-SQLAlchemy
-FastAPI 
+- Consumo de dados da PokeAPI  
+- Criação de registros no banco  
+- Consulta de dados  
+- Atualização de informações  
+- Remoção de registros  
 
-📂 Estrutura do projeto
+---
+
+## 🛠️ Tecnologias
+
+- Python 3.14  
+- SQLite
+- SQLAlchemy
+- FastAPI
+
+---
+
+## 📂 Estrutura do projeto
+
 
 crud_pokemon/
 │
+
 ├── main.py                  # Ponto de entrada da aplicação
+
 ├── requirements.txt         # Dependências do projeto
+
+
 │
 ├── config/
 │   └── database.py          # Configuração da conexão com banco
+
 │
 ├── models/
 │   └── models.py            # Modelos/tabelas do banco de dados
+
 │
 ├── schemas/
 │   └── pokemon.py           # Schemas de validação de dados
+
 │
 ├── services/
 │   └── poke_service.py      # Regras de negócio e integração com API
+
 │
 ├── routes/
 │   └── endpoints.py         # Definição das rotas (CRUD)
 
-⚙️ Instalação
+
+
+
+## ⚙️ Instalação
 
 # Clone o repositório
 git clone https://github.com/jhohannessf/crud_pokemon.git
@@ -57,58 +75,64 @@ cd crud_pokemon
 python -m venv venv
 
 # Ative o ambiente
-# Windows
+1. Windows: 
 venv\Scripts\activate
-# Linux/Mac
+2. Linux/Mac: 
 source venv/bin/activate
 
 # Instale dependências
 pip install -r requirements.txt
 
-▶️ Como executar
+## ▶️ Como executar
 
 uvicorn main:app --reload
 
-🔄 Como funciona o fluxo
+## ▶️ Docs da aplicação
 
-A aplicação consome dados da PokeAPI
-Os dados são tratados na camada de services
-Os models representam a estrutura no banco
-Os dados são validados via schemas
-As operações CRUD são expostas via routes
+Acesse o endereço no navegador: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs).
+Aqui você terá informações de todos os métodos aceitos para consumo e manipulação dos dados.
+Sugiro utilizar programas para consumo de API, pode ser o Insomnia ou Postman.
 
-📊 Exemplo de uso
+## 🔄 Como funciona o fluxo
+
+1. A aplicação consome dados da PokeAPI
+2. Os dados são tratados na camada de services
+3. Os models representam a estrutura no banco
+4. Os dados são validados via schemas
+5. As operações CRUD são expostas via routes
+
+## 📊 Exemplo de uso
 
 As operações são executadas através das rotas definidas em:
 routes/endpoints.py
 
-Exemplos de operações disponíveis:
+## Exemplos de operações disponíveis:
 
-Consultar Pokémon API
-Capturar Pokémon API
-Criar Pokémon
-Listar um Pokémon
-Listar Pokémons capturado
-Atualizar dados
-Remover Pokémon
+# -> LEIA A DOC : [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) <-
 
-🎯 Objetivo do projeto
+1. Consultar Pokémon API (Método GET | URL: http://127.0.0.1:8000/pokemon/{identifier})
+2. Capturar Pokémon API (Método POST | URL: http://127.0.0.1:8000/capture/pokemon/{identifier})
+3. Criar Pokémon (Método POST | URL: http://127.0.0.1:8000/create/pokemon/{identifier})
+4. Listar um Pokémon (Método GET | URL: http://127.0.0.1:8000/read/pokemon/{identifier})
+5. Listar Pokémons capturado (Método GET | URL: http://127.0.0.1:8000/read/pokemon/)
+6. Atualizar dados (Método PATCH | URL: http://127.0.0.1:8000/update/pokemon/{identifier})
+7. Remover Pokémon (Método DELETE | URL: http://127.0.0.1:8000/delete/pokemon/{identifier})
 
-Praticar consumo de API externa
-Trabalhar com persistência de dados
-Aplicar padrão de arquitetura em camadas
-Simular um backend real
-Evoluir boas práticas em Python
+## 🎯 Objetivo do projeto
 
-🔮 Melhorias futuras
+1. Praticar consumo de API externa
+2. Trabalhar com persistência de dados
+3. Aplicar padrão de arquitetura em camadas
+4. Simular um backend real
+5. Evoluir boas práticas em Python
 
-Criar API REST completa com FastAPI
-Adicionar documentação automática (Swagger)
-Implementar testes com pytest
-Dockerizar a aplicação
-Implementar autenticação
-Deploy em nuvem
+## 🔮 Melhorias futuras
 
-📄 Licença
+1. Implementar testes com pytest
+2. Dockerizar a aplicação
+3. Implementar autenticação
+4. Deploy em nuvem
+
+## 📄 Licença
 
 MIT License
