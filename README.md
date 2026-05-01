@@ -32,8 +32,8 @@ Este projeto consome dados da PokeAPI e os armazena em um banco de dados, permit
 ## 📂 Estrutura do projeto
 
 
-crud_pokemon/
-│
+crud_pokemon /
+
 
 ├── main.py                  # Ponto de entrada da aplicação
 
