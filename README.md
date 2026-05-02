@@ -83,6 +83,16 @@ source venv/bin/activate
 # Instale dependências
 pip install -r requirements.txt
 
+# Arquivo .env
+Altere o arquivo conforme suas variáveis de ambiente
+
+A estrutura da URL segue esse padrão:
+
+postgresql://  usuário  :  senha  @  host      :  porta  /  nome_do_banco
+
+postgresql://  postgree :  1234   @  localhost  :  5432   /  crud_pokemon
+
+
 ## ▶️ Como executar
 
 uvicorn main:app --reload
