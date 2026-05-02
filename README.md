@@ -23,9 +23,10 @@ Este projeto consome dados da PokeAPI e os armazena em um banco de dados, permit
 ## 🛠️ Tecnologias
 
 - Python 3.14  
-- SQLite
+- PostgreSQL 18.3
 - SQLAlchemy
 - FastAPI
+- Alembic
 
 ---
 
@@ -60,7 +61,17 @@ crud_pokemon /
 ├── routes/
 │   └── endpoints.py         # Definição das rotas (CRUD)
 
+migrations/                  # Uso do Alembic
 
+├── env.py
+
+├── script.py.mako
+
+├── README
+
+└── versions/
+
+    └── 7fbf9053edd8_criacao_inicial.py
 
 
 ## ⚙️ Instalação
@@ -83,6 +94,9 @@ source venv/bin/activate
 # Instale dependências
 pip install -r requirements.txt
 
+# Instale o Postgres
+Necessário instalar o PosgreSQL para uso do serviço. No projeto estou usando a versão 18.3, junto com o Dbeaver.
+
 # Arquivo .env
 Altere o arquivo conforme suas variáveis de ambiente
 
@@ -90,14 +104,28 @@ A estrutura da URL segue esse padrão:
 
 postgresql://  usuário  :  senha  @  host      :  porta  /  nome_do_banco
 
-postgresql://  postgres :  postgres   @  localhost  :  5432   /  pokemon
+postgresql://  postgres :  postgres   @  localhost  :  5432   /  crud_pokemon
 
 
-## ▶️ Como executar
+## ▶️ Como iniciar o projeto 
 
 uvicorn main:app --reload
 
-## ▶️ Docs da aplicação
+## ▶️ Caso altere o models.py
+Adicionar coluna, mudar tipo, criar nova tabela. 
+
+Não sendo mais necessário apagar o banco, apenas rodar os códigos abaixo:
+
+1. Gera a migration
+
+alembic revision --autogenerate -m "descricao do que mudou"
+
+2. Aplica no banco
+
+alembic upgrade head
+
+
+## 📄 Docs da aplicação
 
 Acesse o endereço no navegador: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs).
 Aqui você terá informações de todos os métodos aceitos para consumo e manipulação dos dados.
