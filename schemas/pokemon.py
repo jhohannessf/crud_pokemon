@@ -7,6 +7,10 @@ class PokemonType(BaseModel):
     name: str       # nome do tipo (ex: "fire")
     url: HttpUrl    # url do tipo na PokeAPI
 
+# Schema que representa o Move do Pokemon (ex: fire, water)
+class PokemonMove(BaseModel):
+    name: str       # nome do Move (ex: "fire-punch")
+    url: HttpUrl    # url do Move na PokeAPI
 
 # Schema que representa as imagens do Pokemon
 class PokemonSprite(BaseModel):
@@ -23,6 +27,7 @@ class PokemonInfo(BaseModel):
     height: int                 # altura do Pokemon
     types: List[PokemonType]    # lista de tipos
     sprites: PokemonSprite      # imagens do Pokemon
+    moves: List[PokemonMove]  # lista de golpes do pokemon
 
     # Configuração do Pydantic v2 — permite converter objetos ORM em schema
     model_config = ConfigDict(from_attributes=True)

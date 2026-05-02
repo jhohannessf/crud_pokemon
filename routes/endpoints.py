@@ -5,7 +5,7 @@ from typing import List
 import models.models as models
 import config.database as database
 from services.poke_service import fetch_pokemon, PokeAPIError
-from schemas.pokemon import PokemonInfo, PokemonType, PokemonSprite
+from schemas.pokemon import PokemonInfo, PokemonType, PokemonSprite, PokemonMove
 
 # APIRouter agrupa as rotas — é registrado no main.py via app.include_router()
 router = APIRouter()
@@ -38,6 +38,9 @@ async def get_pokemon(
             PokemonType(name=t["type"]["name"], url=t["type"]["url"])
             for t in raw["types"]
         ],
+        moves=[
+            PokemonMove(name=m["move"]["name"], url=m["move"]["url"])
+               for m in raw["moves"]],
         sprites=PokemonSprite(front_default=raw["sprites"]["front_default"]),
     )
 
@@ -72,6 +75,9 @@ async def save_pokemon(
     # ex: {"hp": 45, "attack": 49, ...}
     stats = {s["stat"]["name"]: s["base_stat"] for s in raw["stats"]}
 
+    # extrai os moves como string separada por vírgula (ex: "fire-punch, thunder-punch")
+    moves = ", ".join(m["move"]["name"] for m in raw["moves"])
+
     # cria o objeto ORM com todos os dados extraídos
     db_item = models.Item(
         id=raw["id"],
@@ -83,7 +89,8 @@ async def save_pokemon(
         defense=stats.get("defense"),
         special_attack=stats.get("special-attack"),    # atenção: chave com hífen na PokeAPI
         special_defense=stats.get("special-defense"),  # atenção: chave com hífen na PokeAPI
-        speed=stats.get("speed")
+        speed=stats.get("speed"),
+        moves=moves
     )
 
     db.add(db_item)
