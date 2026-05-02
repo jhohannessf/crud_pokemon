@@ -6,4 +6,4 @@ app = FastAPI(title="CRUD + PokéAPI Demo")
 
 init_db()  # cria as tabelas no SQLite ao subir
 
-app.include_router(router)
+app.include_router(router, prefix="/api/v1")
