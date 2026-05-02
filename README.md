@@ -1,6 +1,6 @@
 # 🐍 PokeAPI CRUD em Python
 
-Aplicação backend desenvolvida em Python com apoio parcial de IA, que realiza operações de CRUD utilizando dados da PokeAPI, com persistência em banco de dados e organização em camadas.
+Aplicação backend desenvolvida em Python com apoio de IA, que realiza operações de CRUD utilizando dados da PokeAPI, com persistência em banco de dados e organização em camadas.
 
 ---
 
