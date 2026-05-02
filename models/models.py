@@ -20,6 +20,7 @@ class Item(Base):
     special_attack  = Column(Integer, nullable=True)   # stat Ataque Especial
     special_defense = Column(Integer, nullable=True)   # stat Defesa Especial
     speed          = Column(Integer, nullable=True)    # stat Velocidade
+    moves          = Column(Integer, nullable=True)    # golpes(moves)
 
     # __init__ explícito necessário para aceitar kwargs (ex: Item(id=1, name="pikachu"))
     def __init__(self, **kwargs):
