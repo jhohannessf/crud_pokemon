@@ -1,6 +1,9 @@
+from random import choice
+
 from fastapi import APIRouter, HTTPException, Depends, status, Path
 from sqlalchemy.orm import Session
 from typing import List
+from random import sample
 
 import models.models as models
 import config.database as database
@@ -38,7 +41,7 @@ async def get_pokemon(
             PokemonType(name=t["type"]["name"], url=t["type"]["url"])
             for t in raw["types"]
         ],
-        moves=[
+        moves_all=[
             PokemonMove(name=m["move"]["name"], url=m["move"]["url"])
                for m in raw["moves"]],
         sprites=PokemonSprite(front_default=raw["sprites"]["front_default"]),
@@ -75,8 +78,21 @@ async def save_pokemon(
     # ex: {"hp": 45, "attack": 49, ...}
     stats = {s["stat"]["name"]: s["base_stat"] for s in raw["stats"]}
 
-    # extrai os moves como string separada por vírgula (ex: "fire-punch, thunder-punch")
-    moves = ", ".join(m["move"]["name"] for m in raw["moves"])
+    # extrai todos os moves como string separada por vírgula (ex: "fire-punch, thunder-punch")
+    moves_all = ", ".join(m["move"]["name"] for m in raw["moves"])
+
+    # extrai a lista de nomes de moves diretamente (sem juntar e separar)
+    moves_all_list = [m["move"]["name"] for m in raw["moves"]]
+
+    # sample escolhe 4 elementos aleatórios SEM repetição
+    # min(...) garante que funciona mesmo se o pokemon tiver menos de 4 moves
+    moves_chosen = sample(moves_all_list, min(4, len(moves_all_list)))
+
+    # distribui nos campos — usa None se não houver moves suficientes
+    move_1 = moves_chosen[0] if len(moves_chosen) > 0 else None
+    move_2 = moves_chosen[1] if len(moves_chosen) > 1 else None
+    move_3 = moves_chosen[2] if len(moves_chosen) > 2 else None
+    move_4 = moves_chosen[3] if len(moves_chosen) > 3 else None
 
     # cria o objeto ORM com todos os dados extraídos
     db_item = models.Item(
@@ -90,7 +106,12 @@ async def save_pokemon(
         special_attack=stats.get("special-attack"),    # atenção: chave com hífen na PokeAPI
         special_defense=stats.get("special-defense"),  # atenção: chave com hífen na PokeAPI
         speed=stats.get("speed"),
-        moves=moves
+        moves_all=moves_all,
+        move_1=move_1,
+        move_2=move_2,
+        move_3=move_3,
+        move_4=move_4,
+
     )
 
     db.add(db_item)
