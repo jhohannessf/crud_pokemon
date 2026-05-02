@@ -98,11 +98,17 @@ pip install -r requirements.txt
 Necessário instalar o PosgreSQL para uso do serviço. No projeto estou usando a versão 18.3, junto com o Dbeaver.
 
 # Arquivo .env
-Altere o arquivo conforme suas variáveis de ambiente
+Necessário você criar o arquivo .env conforme suas variáveis de ambiente.
 
 A estrutura da URL segue esse padrão:
 
+DATABASE_URL=postgresql://usuario:senha@localhost:5432/nome_do_banco
+
+Substituindo:
+
 postgresql://  usuário  :  senha  @  host      :  porta  /  nome_do_banco
+
+Exemplo:
 
 postgresql://  postgres :  postgres   @  localhost  :  5432   /  crud_pokemon
 
