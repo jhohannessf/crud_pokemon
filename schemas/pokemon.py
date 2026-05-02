@@ -21,13 +21,13 @@ class PokemonSprite(BaseModel):
 # Schema principal de resposta da nossa API
 # Define quais campos da PokeAPI vamos retornar ao usuário
 class PokemonInfo(BaseModel):
-    id: int                     # ID na Pokédex
-    name: str                   # nome do Pokemon
-    weight: int                 # peso do Pokemon
-    height: int                 # altura do Pokemon
-    types: List[PokemonType]    # lista de tipos
-    sprites: PokemonSprite      # imagens do Pokemon
-    moves: List[PokemonMove]  # lista de golpes do pokemon
+    id: int                         # ID na Pokédex
+    name: str                       # nome do Pokemon
+    weight: int                     # peso do Pokemon
+    height: int                     # altura do Pokemon
+    types: List[PokemonType]        # lista de tipos
+    sprites: PokemonSprite          # imagens do Pokemon
+    moves_all: List[PokemonMove]    # lista de golpes do pokemon
 
     # Configuração do Pydantic v2 — permite converter objetos ORM em schema
     model_config = ConfigDict(from_attributes=True)
