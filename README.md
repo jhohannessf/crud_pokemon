@@ -90,7 +90,7 @@ A estrutura da URL segue esse padrão:
 
 postgresql://  usuário  :  senha  @  host      :  porta  /  nome_do_banco
 
-postgresql://  postgree :  1234   @  localhost  :  5432   /  crud_pokemon
+postgresql://  postgres :  postgres   @  localhost  :  5432   /  pokemon
 
 
 ## ▶️ Como executar
