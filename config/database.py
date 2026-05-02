@@ -1,10 +1,16 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
+from dotenv import load_dotenv
+import os
 
-# SQLite local (troque a URL caso queira Postgres, MySQL etc.)
-SQLALCHEMY_DATABASE_URI = 'sqlite:///./crud_pokemon.db'
+# carrega as variáveis do arquivo .env
+load_dotenv()
 
-engine = create_engine(SQLALCHEMY_DATABASE_URI, connect_args={"check_same_thread": False})
+# lê a URL do banco da variável de ambiente
+SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
+
+# para PostgreSQL removemos o connect_args que era específico do SQLite
+engine = create_engine(SQLALCHEMY_DATABASE_URI)
 
 # Classe para modelos
 Base = declarative_base()
