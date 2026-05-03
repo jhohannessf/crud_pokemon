@@ -1,6 +1,6 @@
 from typing import Optional
 from sqlalchemy import Column, Integer, String
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, field_validator
 from config.database import Base
 
 
@@ -50,7 +50,7 @@ class ItemBase(BaseModel):
     special_defense: Optional[int] = None
     speed:           Optional[int] = None
     moves_all:       Optional[str] = None
-    move_1:         str
+    move_1:         Optional[str] = None
     move_2:         Optional[str] = None
     move_3:         Optional[str] = None
     move_4:         Optional[str] = None
@@ -58,8 +58,14 @@ class ItemBase(BaseModel):
 
 # Schema usado no POST manual — herda todos os campos do ItemBase
 class ItemCreate(ItemBase):
-    pass
+    move_1: str
 
+    @field_validator("move_1")
+    @classmethod
+    def move_1_nao_pode_ser_vazio(cls, v):
+        if not v or not v.strip():
+            raise ValueError("move_1 é obrigatório — o pokemon precisa de pelo menos 1 move")
+        return v
 
 # Schema usado nas respostas — garante que o id sempre virá
 # from_attributes permite converter o objeto ORM direto para este schema
