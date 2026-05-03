@@ -70,15 +70,7 @@ class ItemRead(ItemBase):
 # o dev pode enviar apenas o que quer alterar
 class ItemUpdate(BaseModel):
     name:            Optional[str] = None
-    type:            Optional[str] = None
     abilities:       Optional[str] = None
-    hp:              Optional[int] = None
-    attack:          Optional[int] = None
-    defense:         Optional[int] = None
-    special_attack:  Optional[int] = None
-    special_defense: Optional[int] = None
-    speed:           Optional[int] = None
-    moves_all:       Optional[str] = None
     move_1:         Optional[str] = None
     move_2:         Optional[str] = None
     move_3:         Optional[str] = None
