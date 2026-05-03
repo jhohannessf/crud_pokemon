@@ -213,8 +213,45 @@ def update_item(
     if not db_item:
         raise HTTPException(status_code=404, detail="Pokemon não encontrado")
 
-    # atualiza apenas os campos enviados no body (ignora os não enviados)
-    for key, value in item_in.dict(exclude_unset=True).items():
+    update_data = item_in.dict(exclude_unset=True)
+
+    # valida abilitie_chosen — deve estar dentro do campo abilities do pokémon
+    if "abilitie_chosen" in update_data:
+        abilities_disponiveis = [a.strip() for a in db_item.abilities.split(",")]
+        if update_data["abilitie_chosen"] not in abilities_disponiveis:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Habilidade inválida. Disponíveis para esse pokemon: {abilities_disponiveis}"
+            )
+
+    # valida move_1, move_2, move_3, move_4 — devem estar dentro de moves_all do pokémon
+    if db_item.moves_all:
+        moves_disponiveis = [m.strip() for m in db_item.moves_all.split(",")]
+        for move_field in ["move_1", "move_2", "move_3", "move_4"]:
+            if move_field in update_data:
+                if update_data[move_field] not in moves_disponiveis:
+                    raise HTTPException(
+                        status_code=400,
+                        detail=f"{move_field} inválido. Escolha um move disponível em moves_all do pokemon"
+                    )
+
+    # valida que os 4 moves não se repetem entre si
+    # cruza os moves novos (enviados) com os atuais (já no banco)
+    moves_novos = [update_data[m] for m in ["move_1", "move_2", "move_3", "move_4"] if m in update_data]
+    moves_atuais = [getattr(db_item, m) for m in ["move_1", "move_2", "move_3", "move_4"] if m not in update_data]
+    todos_moves = [m for m in moves_novos + moves_atuais if m is not None]
+
+    if len(todos_moves) != len(set(todos_moves)):
+        raise HTTPException(
+            status_code=400,
+            detail="Os moves não podem se repetir entre move_1, move_2, move_3 e move_4"
+        )
+
+    # aplica apenas os campos permitidos — rejeita qualquer outro campo
+    campos_permitidos = {"name", "abilitie_chosen", "move_1", "move_2", "move_3", "move_4"}
+    for key, value in update_data.items():
+        if key not in campos_permitidos:
+            raise HTTPException(status_code=400, detail=f"Campo '{key}' não pode ser alterado")
         setattr(db_item, key, value)
 
     db.add(db_item)
