@@ -9,12 +9,13 @@ load_dotenv()
 # lê a URL do banco da variável de ambiente
 SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
 
-# para PostgreSQL removemos o connect_args que era específico do SQLite
-engine = create_engine(SQLALCHEMY_DATABASE_URI)
-
 
 def create_database_if_not_exists():
-    """Conecta no banco padrão 'postgres' e cria o crud_pokemon se não existir."""
+    """Conecta no banco padrão 'postgres' e cria o banco definido no .env se não existir."""
+
+    # extrai o nome do banco do final da URL
+    # ex: "postgresql://postgres:1234@localhost:5432/crud_pokemon" → "crud_pokemon"
+    db_name = SQLALCHEMY_DATABASE_URI.rsplit("/", 1)[1]
 
     # troca o nome do banco na URL para 'postgres' (banco padrão que sempre existe)
     default_url = SQLALCHEMY_DATABASE_URI.rsplit("/", 1)[0] + "/postgres"
@@ -23,17 +24,18 @@ def create_database_if_not_exists():
     default_engine = create_engine(default_url, isolation_level="AUTOCOMMIT")
 
     with default_engine.connect() as conn:
-        # verifica se o banco já existe
+        # verifica se o banco já existe usando o nome extraído do .env
         result = conn.execute(
-            text("SELECT 1 FROM pg_database WHERE datname = 'crud_pokemon'")
+            text("SELECT 1 FROM pg_database WHERE datname = :db_name"),
+            {"db_name": db_name}
         )
         exists = result.fetchone()
 
         if not exists:
-            conn.execute(text("CREATE DATABASE crud_pokemon"))
-            print("✅ Banco 'crud_pokemon' criado com sucesso!")
+            conn.execute(text(f"CREATE DATABASE {db_name}"))
+            print(f"✅ Banco '{db_name}' criado com sucesso!")
         else:
-            print("✅ Banco 'crud_pokemon' já existe, seguindo...")
+            print(f"✅ Banco '{db_name}' já existe, seguindo...")
 
     default_engine.dispose()
 
@@ -41,16 +43,13 @@ def create_database_if_not_exists():
 # cria o banco se não existir antes de conectar
 create_database_if_not_exists()
 
-if "sqlite" in SQLALCHEMY_DATABASE_URI:
-    engine = create_engine(SQLALCHEMY_DATABASE_URI, connect_args={"check_same_thread": False})
-else:
-    engine = create_engine(SQLALCHEMY_DATABASE_URI)
+# só agora cria o engine — banco já existe garantidamente
+engine = create_engine(SQLALCHEMY_DATABASE_URI)
 
-
-# Classe para modelos
+# classe para modelos
 Base = declarative_base()
 
-# Sessão que será injetada nas rotas
+# sessão que será injetada nas rotas
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
@@ -66,6 +65,3 @@ def get_db():
 def init_db():
     """Cria as tabelas a partir dos modelos."""
     Base.metadata.create_all(bind=engine)
-
-
-
