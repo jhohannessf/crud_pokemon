@@ -1,9 +1,7 @@
-from random import choice
-
 from fastapi import APIRouter, HTTPException, Depends, status, Path
 from sqlalchemy.orm import Session
 from typing import List
-from random import sample
+from random import sample, choice
 
 import models.models as models
 import config.database as database
@@ -74,6 +72,13 @@ async def save_pokemon(
     # extrai as habilidades como string separada por vírgula (ex: "static, lightning-rod")
     abilities = ", ".join(a["ability"]["name"] for a in raw["abilities"])
 
+    # extrai a lista de nomes de moves diretamente (sem juntar e separar)
+    abilities_all_list = [a["ability"]["name"] for a in raw["abilities"]]
+
+    # choice escolhe 1 elemento aleatório da lista
+    # se tiver só 1 habilidade, retorna ela mesma
+    abilitie_chosen = choice(abilities_all_list) if abilities_all_list else None
+
     # transforma a lista de stats em dicionário para facilitar o acesso
     # ex: {"hp": 45, "attack": 49, ...}
     stats = {s["stat"]["name"]: s["base_stat"] for s in raw["stats"]}
@@ -99,6 +104,7 @@ async def save_pokemon(
         id=raw["id"],
         name=raw["name"],
         type=tipos,
+        abilitie_chosen=abilitie_chosen,
         abilities=abilities,
         hp=stats.get("hp"),
         attack=stats.get("attack"),
