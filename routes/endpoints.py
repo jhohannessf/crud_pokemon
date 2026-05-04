@@ -6,7 +6,7 @@ from random import sample, choice
 import models.models as models
 import config.database as database
 from services.poke_service import fetch_pokemon, PokeAPIError
-from schemas.pokemon import PokemonInfo, PokemonType, PokemonSprite, PokemonMove
+from schemas.pokemon import PokemonInfo, PokemonType, PokemonSprite, PokemonMove, PokemonAbilities
 
 # APIRouter agrupa as rotas — é registrado no main.py via app.include_router()
 router = APIRouter()
@@ -33,16 +33,20 @@ async def get_pokemon(
     return PokemonInfo(
         id=raw["id"],
         name=raw["name"],
-        weight=raw["weight"],
-        height=raw["height"],
         types=[
             PokemonType(name=t["type"]["name"], url=t["type"]["url"])
             for t in raw["types"]
         ],
-        moves_all=[
+        abilities=[
+            PokemonAbilities(name=a["ability"]["name"], url=a["ability"]["url"])
+            for a in raw["abilities"]
+        ],
+        moves=[
             PokemonMove(name=m["move"]["name"], url=m["move"]["url"])
                for m in raw["moves"]],
         sprites=PokemonSprite(front_default=raw["sprites"]["front_default"]),
+        weight=raw["weight"],
+        height=raw["height"],
     )
 
 
@@ -77,21 +81,21 @@ async def save_pokemon(
 
     # choice escolhe 1 elemento aleatório da lista
     # se tiver só 1 habilidade, retorna ela mesma
-    abilitie_chosen = choice(abilities_all_list) if abilities_all_list else None
+    ability = choice(abilities_all_list) if abilities_all_list else None
 
     # transforma a lista de stats em dicionário para facilitar o acesso
     # ex: {"hp": 45, "attack": 49, ...}
     stats = {s["stat"]["name"]: s["base_stat"] for s in raw["stats"]}
 
     # extrai todos os moves como string separada por vírgula (ex: "fire-punch, thunder-punch")
-    moves_all = ", ".join(m["move"]["name"] for m in raw["moves"])
+    moves = ", ".join(m["move"]["name"] for m in raw["moves"])
 
     # extrai a lista de nomes de moves diretamente (sem juntar e separar)
-    moves_all_list = [m["move"]["name"] for m in raw["moves"]]
+    moves_list = [m["move"]["name"] for m in raw["moves"]]
 
     # sample escolhe 4 elementos aleatórios SEM repetição
     # min(...) garante que funciona mesmo se o pokemon tiver menos de 4 moves
-    moves_chosen = sample(moves_all_list, min(4, len(moves_all_list)))
+    moves_chosen = sample(moves_list, min(4, len(moves_list)))
 
     # distribui nos campos — usa None se não houver moves suficientes
     move_1 = moves_chosen[0] if len(moves_chosen) > 0 else None
@@ -104,7 +108,7 @@ async def save_pokemon(
         id=raw["id"],
         name=raw["name"],
         type=tipos,
-        abilitie_chosen=abilitie_chosen,
+        ability=ability,
         abilities=abilities,
         hp=stats.get("hp"),
         attack=stats.get("attack"),
@@ -112,11 +116,11 @@ async def save_pokemon(
         special_attack=stats.get("special-attack"),    # atenção: chave com hífen na PokeAPI
         special_defense=stats.get("special-defense"),  # atenção: chave com hífen na PokeAPI
         speed=stats.get("speed"),
-        moves_all=moves_all,
         move_1=move_1,
         move_2=move_2,
         move_3=move_3,
         move_4=move_4,
+        moves=moves,
 
     )
 
@@ -215,24 +219,24 @@ def update_item(
 
     update_data = item_in.dict(exclude_unset=True)
 
-    # valida abilitie_chosen — deve estar dentro do campo abilities do pokémon
-    if "abilitie_chosen" in update_data:
+    # valida ability — deve estar dentro do campo abilities do pokémon
+    if "ability" in update_data:
         abilities_disponiveis = [a.strip() for a in db_item.abilities.split(",")]
-        if update_data["abilitie_chosen"] not in abilities_disponiveis:
+        if update_data["ability"] not in abilities_disponiveis:
             raise HTTPException(
                 status_code=400,
                 detail=f"Habilidade inválida. Disponíveis para esse pokemon: {abilities_disponiveis}"
             )
 
-    # valida move_1, move_2, move_3, move_4 — devem estar dentro de moves_all do pokémon
-    if db_item.moves_all:
-        moves_disponiveis = [m.strip() for m in db_item.moves_all.split(",")]
+    # valida move_1, move_2, move_3, move_4 — devem estar dentro de moves do pokémon
+    if db_item.moves:
+        moves_disponiveis = [m.strip() for m in db_item.moves.split(",")]
         for move_field in ["move_1", "move_2", "move_3", "move_4"]:
             if move_field in update_data:
                 if update_data[move_field] not in moves_disponiveis:
                     raise HTTPException(
                         status_code=400,
-                        detail=f"{move_field} inválido. Escolha um move disponível em moves_all do pokemon"
+                        detail=f"{move_field} inválido. Escolha um move disponível em moves do pokemon"
                     )
 
     # valida que os 4 moves não se repetem entre si
@@ -248,7 +252,7 @@ def update_item(
         )
 
     # aplica apenas os campos permitidos — rejeita qualquer outro campo
-    campos_permitidos = {"name", "abilitie_chosen", "move_1", "move_2", "move_3", "move_4"}
+    campos_permitidos = {"name", "ability", "move_1", "move_2", "move_3", "move_4"}
     for key, value in update_data.items():
         if key not in campos_permitidos:
             raise HTTPException(status_code=400, detail=f"Campo '{key}' não pode ser alterado")
@@ -257,6 +261,10 @@ def update_item(
     db.add(db_item)
     db.commit()
     db.refresh(db_item)
+    # raise HTTPException(
+    #     status_code=200,
+    #     detail="O Pokémon foi alterado com sucesso"
+    # )
     return db_item
 
 
