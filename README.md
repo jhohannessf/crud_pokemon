@@ -1,4 +1,4 @@
-# 🐍 PokeAPI CRUD em Python
+# 🐍 PokeAPI CRUD em Python v.1.0.1
 
 Aplicação backend desenvolvida em Python com apoio de IA, que realiza operações de CRUD utilizando dados da PokeAPI, com persistência em banco de dados e organização em camadas.
 
@@ -27,51 +27,54 @@ Este projeto consome dados da PokeAPI e os armazena em um banco de dados, permit
 - SQLAlchemy
 - FastAPI
 - Alembic
+- Pydantic v2
+- Httpx
+- Python-dotenv
 
 ---
 
 ## 📂 Estrutura do projeto
 
 
-crud_pokemon /
+crud_pokemon/
 
+├── .env                        ← variáveis de ambiente (não sobe pro Git)
 
-├── main.py                  # Ponto de entrada da aplicação
+├── .gitignore
 
-├── requirements.txt         # Dependências do projeto
+├── main.py                     ← Ponto de entrada da aplicação
 
+├── requirements.txt
 
-│
+├── alembic.ini
+
 ├── config/
-│   └── database.py          # Configuração da conexão com banco
 
-│
+│   └── database.py             ← cria banco automaticamente + engine PostgreSQL
+
 ├── models/
-│   └── models.py            # Modelos/tabelas do banco de dados
 
-│
+│   └── models.py               ← ORM + schemas Pydantic
+
 ├── schemas/
-│   └── pokemon.py           # Schemas de validação de dados
 
-│
+│   └── pokemon.py              ← Schema de resposta da PokéAPI
+
 ├── services/
-│   └── poke_service.py      # Regras de negócio e integração com API
 
-│
+│   └── poke_service.py         ← Comunicação com a PokéAPI
+
 ├── routes/
-│   └── endpoints.py         # Definição das rotas (CRUD)
 
-migrations/                  # Uso do Alembic
+│   └── endpoints.py            ← Todos os endpoints CRUD
 
-├── env.py
+└── migrations/                 ← Arquivos do Alembic
 
-├── script.py.mako
-
-├── README
-
-└── versions/
-
-    └── 7fbf9053edd8_criacao_inicial.py
+    ├── env.py
+    ├── script.py.mako
+    ├── README
+    └── versions/
+        └── 7fbf9053edd8_criacao_inicial.py
 
 
 ## ⚙️ Instalação
@@ -120,7 +123,7 @@ uvicorn main:app --reload
 ## ▶️ Caso altere o models.py
 Adicionar coluna, mudar tipo, criar nova tabela. 
 
-Não sendo mais necessário apagar o banco, apenas rodar os códigos abaixo:
+Após a implementação do Alembic, não é mais necessário apagar o banco, apenas rodar os códigos abaixo:
 
 1. Gera a migration
 
@@ -161,6 +164,16 @@ routes/endpoints.py
 5. Listar Pokémons capturado (Método GET | URL: http://127.0.0.1:8000/api/v1/read/pokemon/)
 6. Atualizar dados (Método PATCH | URL: http://127.0.0.1:8000/api/v1/update/pokemon/{identifier})
 7. Remover Pokémon (Método DELETE | URL: http://127.0.0.1:8000/api/v1/delete/pokemon/{identifier})
+
+## Regras de negócio implementadas:
+
+*   move_1 obrigatório na criação manual
+*   Moves sorteados aleatoriamente sem repetição via sample
+*   ability sorteada aleatoriamente via choice
+*   PATCH valida ability contra abilities do pokemon
+*   PATCH valida moves contra moves do pokemon
+*   PATCH impede repetição de moves entre move_1 a move_4
+*   Campos editáveis no PATCH: name, ability, move_1, move_2, move_3, move_4
 
 ## 🎯 Objetivo do projeto
 
