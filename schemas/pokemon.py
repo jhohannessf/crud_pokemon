@@ -7,10 +7,17 @@ class PokemonType(BaseModel):
     name: str       # nome do tipo (ex: "fire")
     url: HttpUrl    # url do tipo na PokeAPI
 
+# Schema que representa as habilidades do Pokemon (ex: overgrow, chlorophyll)
+class PokemonAbilities(BaseModel):
+    name: str       # nome da Habilidade (ex: "overgrow")
+    url: HttpUrl    # url do Move na PokeAPI
+
+
 # Schema que representa o Move do Pokemon (ex: fire, water)
 class PokemonMove(BaseModel):
     name: str       # nome do Move (ex: "fire-punch")
     url: HttpUrl    # url do Move na PokeAPI
+
 
 # Schema que representa as imagens do Pokemon
 class PokemonSprite(BaseModel):
@@ -21,13 +28,14 @@ class PokemonSprite(BaseModel):
 # Schema principal de resposta da nossa API
 # Define quais campos da PokeAPI vamos retornar ao usuário
 class PokemonInfo(BaseModel):
-    id: int                         # ID na Pokédex
-    name: str                       # nome do Pokemon
-    weight: int                     # peso do Pokemon
-    height: int                     # altura do Pokemon
-    types: List[PokemonType]        # lista de tipos
-    sprites: PokemonSprite          # imagens do Pokemon
-    moves_all: List[PokemonMove]    # lista de golpes do pokemon
+    id: int                             # ID na Pokedex
+    name: str                           # nome do Pokémon
+    types: List[PokemonType]            # lista de tipos do Pokémon
+    abilities: List[PokemonAbilities]   #lista de habilidades do Pokémon
+    moves: List[PokemonMove]            # lista de golpes do Pokémon
+    weight: int                         # peso do Pokémon
+    height: int                         # altura do Pokémon
+    sprites: PokemonSprite              # imagens do Pokémon
 
     # Configuração do Pydantic v2 — permite converter objetos ORM em schema
     model_config = ConfigDict(from_attributes=True)
